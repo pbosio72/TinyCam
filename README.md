@@ -77,7 +77,7 @@ The OLED display shows connection information in clear text (WiFi name, password
 | Parameter | Value |
 |-----------|-------|
 | Video Resolution | VGA (640x480) default, switchable to SVGA/XGA |
-| Frame Rate | ~10 fps (refresh every 100ms) |
+| Frame Rate | Adjustable 3.3-10 fps (100-300ms refresh) |
 | Image Format | JPEG |
 | LED Control | PWM 256 levels (0-255) |
 | Protocol | HTTP |
@@ -114,9 +114,10 @@ GND      → ESP32-CAM GND Pin
 ## ✨ Features
 
 ### 1. Video Streaming
-- Automatic image refresh every 100ms
+- Automatic image refresh with adjustable speed
 - Responsive full-screen display
 - Compatible with all modern browsers
+- Real-time FPS adjustment slider (3.3-10 fps)
 
 ### 2. Flash LED Control
 - **Brightness slider**: Fine adjustment 0-255 with gradual control (step=1)
@@ -133,8 +134,6 @@ GND      → ESP32-CAM GND Pin
 ### 4. Image Orientation
 - **NORMAL**: Default orientation
 - **ROTATE 180**: 180 degrees rotation
-- **FLIP VERTICAL**: Vertical flip only
-- **FLIP HORIZONTAL**: Horizontal mirror only
 
 ### 5. Resolution Control
 - **VGA (640x480)**: Default, balanced quality/speed
@@ -142,10 +141,22 @@ GND      → ESP32-CAM GND Pin
 - **XGA (1024x768)**: High quality, slower streaming
 - Real-time resolution switching without restart
 
-### 6. OLED Display
+### 6. Stream Speed Control
+- **Adjustable refresh rate slider**: 100ms to 300ms (10 fps to 3.3 fps)
+- Real-time adjustment without page reload
+- Find optimal balance between smoothness and stability
+- Useful for weak WiFi connections or multiple clients
+
+### 7. OLED Display
 - Shows SSID, password and IP address
 - Information always visible without PC
 - Useful for field configuration
+
+### 8. Live Status Display
+- **Current resolution** indicator
+- **Current FPS** (frames per second) display
+- Real-time updates when settings change
+- Easy monitoring of streaming parameters
 
 ---
 
@@ -209,8 +220,17 @@ Port: 80
 5. Enter password: **12345678**
 6. Open browser and navigate to: `http://192.168.4.1`
 7. Use controls on web page
+8. Adjust stream speed slider if experiencing disconnections
 
 > ⚠️ **Note:** When connected to ESP32-CAM hotspot you will not have Internet access.
+
+### Optimizing Stream Performance
+
+If you experience lag or disconnections:
+- Start with **150ms** (6.7 fps) - good balance
+- For weak signals, increase to **200ms** (5 fps) or higher
+- For smoother video on good connections, try **100ms** (10 fps)
+- The slider allows real-time adjustment without restart
 
 ---
 
@@ -243,14 +263,16 @@ config.frame_size = FRAMESIZE_SVGA;  // 800x600
 config.frame_size = FRAMESIZE_XGA;   // 1024x768
 ```
 
-### Modify Refresh Speed
+### Modify Default Refresh Speed
+
+The default refresh rate is now **150ms** (6.7 fps). To change it, modify the JavaScript in the HTML section:
 
 ```javascript
-// In HTML section
-setInterval(updateImage, 100);  // 100ms = 10fps (default)
-setInterval(updateImage, 50);   // 50ms = 20fps (smoother but heavier)
-setInterval(updateImage, 200);  // 200ms = 5fps (lighter)
+// Default value
+let currentRefreshRate = 150;  // Change to 100, 200, 250, etc.
 ```
+
+Users can adjust this in real-time using the Stream Speed slider on the web interface.
 
 ### Modify JPEG Quality
 
@@ -269,6 +291,17 @@ FRAMESIZE_QVGA   // 320x240
 FRAMESIZE_SXGA   // 1280x1024
 FRAMESIZE_UXGA   // 1600x1200
 ```
+
+---
+
+## ⚡ Power Consumption
+
+- **Average current:** ~180-250mA at 5V
+- **Peaks during transmission:** ~300mA
+- **Higher resolution:** Increases power consumption
+- **Battery life** with 10000mAh powerbank: ~40-50 hours theoretical
+
+> ⚠️ **Important:** Use a power supply capable of at least 2A. Insufficient power is the most common cause of disconnections and instability.
 
 ---
 
@@ -319,6 +352,45 @@ Libraries used under respective licenses (MIT/Apache).
 For questions, issues or suggestions, refer to:
 - [ESP32-CAM official documentation](https://github.com/espressif/arduino-esp32)
 - [Arduino/ESP32 community forums](https://www.esp32.com/)
+
+---
+
+## 📝 Changelog
+
+### v1.4 - December 2024
+- 🗑️ Removed flip vertical and flip horizontal buttons for cleaner interface
+- 📊 Added live status display showing current resolution and FPS
+- 🎯 Status display updates in real-time when settings change
+- ✨ Improved visual feedback for active settings
+- 🎨 Cleaner, more focused control panel
+
+### v1.3 - December 2024
+- ✨ Added real-time FPS adjustment slider (100-300ms range)
+- 🎯 Default refresh rate changed to 150ms (6.7 fps) for better stability
+- 📊 Live FPS display shows current streaming speed
+- ⚡ Improved performance optimization options
+- 📱 Better mobile device compatibility with adjustable stream speed
+
+### v1.2 - December 2024
+- ✨ Improved LED brightness slider with gradual control (step=1)
+- 🎨 Reorganized web interface layout (brightness first, then buttons)
+- 🎯 Limited resolution options to VGA, SVGA, XGA for better usability
+- 🔧 Enhanced slider visual appearance (larger cursor, thicker bar)
+- 📐 Optimized button sizes (reduced by ~40% for cleaner interface)
+
+### v1.1 - December 2024
+- ✨ Added image orientation controls (normal, 180°, vertical flip, horizontal flip)
+- 📸 Added real-time resolution switching (VGA, SVGA, XGA)
+- 🎨 Improved web interface with modern gradient design
+- ✨ Enhanced UI/UX with glassmorphism effects
+- 🌐 All comments translated to English for GitHub publication
+
+### v1.0 - December 2024
+- 🎉 Basic streaming implementation with autonomous hotspot
+- 💡 Added LED control with PWM and slider
+- 📺 Added OLED display for connection info
+- 📷 Added photo capture function with download
+- ⚡ Optimized refresh rate for mobile compatibility
 
 ---
 
